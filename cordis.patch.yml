@@ -1,0 +1,41 @@
+# Patch layer contributed by this bundle.
+#
+# `dsh.bundle.patch` in package.json applies this file after every bundle layer
+# and before the profile's own cordis.patch.yml, so installing the package is
+# enough to publish the fourth permission mode. The user never edits the host
+# composition by hand.
+#
+# Two entries:
+#   1. `permission`  — republish the preset table with `manual` FIRST, because
+#      the client renderer shows presets in table order.
+#   2. `insert`      — mount this plugin's Host half into the host composition.
+
+- id: permission
+  config:
+    presets:
+      manual:
+        sandbox: danger-full-access
+        approval: ask
+        name: Manual
+        description: Every tool call is confirmed by you. No sandbox, full execution authority, optional feedback per call.
+      read-only:
+        sandbox: read-only
+        approval: ask
+        name: Read Only
+        description: Read and search only; no writes.
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+        name: Workspace Write
+        description: Write inside the workspace and permitted temporary directories; wider retries require approval.
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+        name: Full access
+        description: Full file access without approval prompts.
+    defaultPreset: workspace-write
+
+- insert:
+    - id: manual-approval
+      name: 'dsh-manual-approval'
+      config: {}

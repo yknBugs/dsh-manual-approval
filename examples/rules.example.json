@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "masterEnabled": true,
+  "rules": [
+    {
+      "id": "example-warn-recursive-delete",
+      "name": "Warn: recursive delete of a drive root or system tree",
+      "enabled": true,
+      "conditions": [
+        { "target": "toolName", "pattern": "^(pwsh|bash)$" },
+        { "target": "argValue", "pattern": "(?i)(rm\\s+-[a-z]*r[a-z]*f|rm\\s+-[a-z]*f[a-z]*r|Remove-Item[^|]*?-Recurse|rd\\s+/s|rmdir\\s+/s|del\\s+/[fsq]+)" },
+        { "target": "argValue", "pattern": "(?i)([A-Za-z]:\\\\\\\\?\\s*[\"']?\\s*$|%SystemRoot%|%USERPROFILE%|C:\\\\\\\\+Windows|/\\s*$|--no-preserve-root)" }
+      ],
+      "action": {
+        "kind": "warn",
+        "message": "This call looks like a recursive delete aimed at a drive root or a system tree. Read the resolved path, not the intended one, before allowing it."
+      }
+    },
+    {
+      "id": "example-deny-encoded-shell",
+      "name": "Deny: base64-encoded shell payload",
+      "enabled": false,
+      "conditions": [
+        { "target": "argValue", "pattern": "(?i)(-enc|-EncodedCommand|FromBase64String|Invoke-Expression|\\biex\\b)" }
+      ],
+      "action": {
+        "kind": "deny",
+        "message": "Encoded or self-evaluating commands cannot be reviewed by reading them. Send the literal command instead."
+      }
+    },
+    {
+      "id": "example-allow-readonly-tools",
+      "name": "Allow: read-only inspection tools",
+      "enabled": false,
+      "conditions": [
+        { "target": "toolName", "pattern": "^(read|glob|grep)$" }
+      ],
+      "action": {
+        "kind": "approve",
+        "message": ""
+      }
+    },
+    {
+      "id": "example-judge-local",
+      "name": "Judge: ask a local service about shell commands",
+      "enabled": false,
+      "conditions": [
+        { "target": "toolName", "pattern": "^(pwsh|bash)$" }
+      ],
+      "action": {
+        "kind": "judge",
+        "url": "http://127.0.0.1:8080/dsh-judge",
+        "method": "POST",
+        "headersText": "content-type: application/json",
+        "body": "",
+        "decisionPath": "result.decision",
+        "reasonPath": "result.why",
+        "timeoutMs": 10000,
+        "message": ""
+      }
+    }
+  ]
+}

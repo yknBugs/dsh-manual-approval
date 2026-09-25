@@ -1,0 +1,61 @@
+{
+  "name": "dsh-manual-approval",
+  "version": "0.1.0",
+  "description": "A Manual approval permission preset for DeepSeek Harness: every tool call is confirmed by the user, with the tool name, every argument, and an optional feedback message carried into the tool result.",
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "dsh",
+    "permission",
+    "approval",
+    "plugin"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "examples",
+    "cordis.patch.yml",
+    "README.md",
+    "README_ZH.md",
+    "DESIGN.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.2"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "scripts": {
+    "test": "node scripts/selftest-client.mjs && node scripts/selftest-apply.mjs && node scripts/selftest-rules.mjs && node scripts/selftest-judge.mjs && node --import ./scripts/register-stub.mjs scripts/selftest.mjs",
+    "test:boot": "python scripts/verify-boot.py",
+    "test:render": "python scripts/verify-render.py"
+  }
+}

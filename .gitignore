@@ -1,0 +1,7 @@
+# Test-only dependency shims created by scripts/register-stub.mjs
+.stubs/dsh-llm/
+
+# Nothing here is part of the published package
+node_modules/
+*.tgz
+dump.txt
